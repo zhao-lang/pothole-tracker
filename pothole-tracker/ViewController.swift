@@ -10,9 +10,15 @@ import UIKit
 import SceneKit
 import ARKit
 
+protocol Logger {
+    func log(message: String)
+}
+
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    private var ukf: UKF!
+    private var ukfRunning: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +34,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the scene to the view
         sceneView.scene = scene
+        
+        ukf = UKF()
+        ukfRunning = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,6 +57,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     // MARK: - ARSCNViewDelegate
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !ukfRunning {
+            ukf.run()
+            ukfRunning = true
+        }
+//        ukf.testLLT()
+    }
     
 /*
     // Override to create and configure nodes for anchors added to the view's session.
